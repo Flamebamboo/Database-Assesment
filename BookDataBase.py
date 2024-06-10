@@ -123,11 +123,14 @@ def add_data():
     db.commit()
 
 def remove_data():
+    import sqlite3
+    db = sqlite3.connect("books.db")
+    cursor = db.cursor()
     '''Removing data from the current database'''
-    book_id = input("Enter the ID of the book to remove")
+    book_title = input("Enter the name of the book to remove")
 
-    sql = "DELETE FROM Books WHERE id = ?;"
-    cursor.execute(sql, (book_id,))
+    sql = "DELETE FROM Books WHERE book_name = ?;"
+    cursor.execute(sql, (book_title,))
     db.commit()
 
 #main
