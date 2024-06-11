@@ -32,6 +32,7 @@ def print_all_books():
 
 #2
 def print_oldest_books():
+    '''will printt allbook assorted by oldest book'''
     import sqlite3
     db = sqlite3.connect("books.db")
     cursor = db.cursor()
@@ -42,6 +43,7 @@ def print_oldest_books():
     db.close()
 #3
 def print_newest_books():
+    '''will printt allbook assorted by newest book'''
     import sqlite3
     db = sqlite3.connect("books.db")
     cursor = db.cursor()
@@ -55,6 +57,7 @@ def print_newest_books():
 
 #4
 def print_horror_genre():
+    '''function that will printt all horror genre'''
     import sqlite3
     db = sqlite3.connect("books.db")
     cursor = db.cursor()
@@ -66,6 +69,7 @@ def print_horror_genre():
 
 #5
 def print_childrens_literature():
+    '''function that will print all childrens literature'''
     import sqlite3
     db = sqlite3.connect("books.db")
     cursor = db.cursor()
@@ -76,6 +80,7 @@ def print_childrens_literature():
     db.close()
 #6
 def print_fantasy_genre():
+    '''function that will print all fantasy genre'''
     import sqlite3
     db = sqlite3.connect("books.db")
     cursor = db.cursor()
@@ -86,6 +91,7 @@ def print_fantasy_genre():
     db.close()
 #7
 def print_science_fiction():
+    '''function that will print all science fiction'''
     import sqlite3
     db = sqlite3.connect("books.db")
     cursor = db.cursor()
@@ -97,6 +103,7 @@ def print_science_fiction():
     db.close()
 #8
 def list_all_author():
+    '''listing all author in one collumn'''
     import sqlite3
     db = sqlite3.connect("books.db")
     cursor = db.cursor()
@@ -123,15 +130,61 @@ def add_data():
     db.commit()
 
 def remove_data():
+    '''Removing data from the current database'''
     import sqlite3
     db = sqlite3.connect("books.db")
     cursor = db.cursor()
-    '''Removing data from the current database'''
-    book_title = input("Enter the name of the book to remove")
+    #asking the user the name of the book to get removed e.g "Harrypotter"
+    book_name= input("Enter the name of the book to remove: ")
+    
+    cursor.execute("SELECT * FROM Books WHERE book_title = ?", (book_name,))
+    book = cursor.fetchone()
+    
+    if not book:
+        print("That book does not exist.")
+        db.close()
 
     sql = "DELETE FROM Books WHERE book_name = ?;"
-    cursor.execute(sql, (book_title,))
+    cursor.execute(sql, (book_name,))
     db.commit()
+    print("That book is removed!")
+
+def edit_data():
+    '''Edit existing book in the database.'''
+    import sqlite3
+    db = sqlite3.connect("books.db")
+    cursor = db.cursor()
+    
+    book_name= input("Enter the book name you want to edit: ")
+
+ 
+    cursor.execute("SELECT * FROM Books WHERE book_name = ?", (book_name,))
+    book = cursor.fetchone()
+    
+    if not book:
+        print("That book does not exist.")
+        db.close()
+    
+    print("Current details of the book:")
+    print(f"Book Title: {book[1]}")
+    print(f"Book Author: {book[2]}")
+    print(f"Book Publishing Date: {book[3]}")
+    print(f"Book Genre: {book[4]}")
+    print(f"Book Summary: {book[5]}")
+
+    # Prompt the user for new details
+    new_title = input(f"New title (or press enter to keep): ") or book[1]
+    new_author = input(f"New author (or press enter to keep): ") or book[2]
+    new_publishing_date = input(f"New publishing date (or press enter to keep): ") or book[3]
+    new_genre = input(f"New genre (or press enter to keep): ") or book[4]
+    new_summary = input(f"New summary (or press enter to keep): ") or book[5]
+
+    # Update the book details in the database
+    cursor.execute(""" UPDATE Books SET book_name = ?, author_name = ?, publishing_date = ?, genre_type = ?, summary = ? WHERE book_name = ?;""", (new_title, new_author, new_publishing_date, new_genre, new_summary, book_name))
+    
+    db.commit()
+    print("Updated new books data")
+    db.close()
 
 #main
 while True:
@@ -166,7 +219,7 @@ while True:
         add_data()
     elif user_input == "10":
         remove_data()
-    #  elif user_input == "11":
-    #     edit_data()
+    elif user_input == "11":
+        edit_data()
     else:
         print("That is not an option")
