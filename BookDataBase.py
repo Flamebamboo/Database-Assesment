@@ -118,13 +118,13 @@ def add_data():
     import sqlite3
     db = sqlite3.connect("books.db")
     cursor = db.cursor()
-
+    #This will prompt the user for book details 
     book_title = input("Enter book title: ")
     author_name = input("Enter author name: ")
     publishing_date = input("Enter publishing date (Year-month-day): ")
     genre = input("Enter genre: ")
     summary = input("Enter summary: ")    
-      
+    #This SQL Query will insert the data into the DATABASE that the user has input 
     sql = "INSERT INTO Books (book_name, author_name, publishing_date, genre_type, summary) VALUES (?, ?, ?, ?, ?);"
     cursor.execute(sql, (book_title, author_name, publishing_date, genre, summary))
     db.commit()
@@ -137,7 +137,7 @@ def remove_data():
     #asking the user the name of the book to get removed e.g "Harrypotter"
     book_name= input("Enter the name of the book to remove: ")
     
-    cursor.execute("SELECT * FROM Books WHERE book_title = ?", (book_name,))
+    cursor.execute("SELECT * FROM Books WHERE book_name = ?", (book_name,))
     book = cursor.fetchone()
     
     if not book:
@@ -154,34 +154,34 @@ def edit_data():
     import sqlite3
     db = sqlite3.connect("books.db")
     cursor = db.cursor()
-    
+    #User inputs book name they want to edit
     book_name= input("Enter the book name you want to edit: ")
 
- 
+    #This sql query selects book_name collumn and find the book name that user has input
     cursor.execute("SELECT * FROM Books WHERE book_name = ?", (book_name,))
     book = cursor.fetchone()
-    
+    #if the book user has input does not exist in the database then it will print "does not exist"
     if not book:
         print("That book does not exist.")
         db.close()
-    
+    #Printing the book details for user to see
     print("Current details of the book:")
-    print(f"Book Title: {book[1]}")
+    print(f"Book Name: {book[1]}")
     print(f"Book Author: {book[2]}")
     print(f"Book Publishing Date: {book[3]}")
     print(f"Book Genre: {book[4]}")
     print(f"Book Summary: {book[5]}")
 
     # Prompt the user for new details
-    new_title = input(f"New title (or press enter to keep): ") or book[1]
+    book_name = input(f"New Name (or press enter to keep): ") or book[1]
     new_author = input(f"New author (or press enter to keep): ") or book[2]
     new_publishing_date = input(f"New publishing date (or press enter to keep): ") or book[3]
     new_genre = input(f"New genre (or press enter to keep): ") or book[4]
     new_summary = input(f"New summary (or press enter to keep): ") or book[5]
 
     # Update the book details in the database
-    cursor.execute(""" UPDATE Books SET book_name = ?, author_name = ?, publishing_date = ?, genre_type = ?, summary = ? WHERE book_name = ?;""", (new_title, new_author, new_publishing_date, new_genre, new_summary, book_name))
-    
+    cursor.execute(""" UPDATE Books SET book_name = ?, author_name = ?, publishing_date = ?, genre_type = ?, summary = ?""", (book_name, new_author, new_publishing_date, new_genre, new_summary))
+    #Commit after changes
     db.commit()
     print("Updated new books data")
     db.close()
@@ -222,4 +222,5 @@ while True:
     elif user_input == "11":
         edit_data()
     else:
+        #if user inputs something else then print this
         print("That is not an option")
